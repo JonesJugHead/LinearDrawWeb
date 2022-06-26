@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>P5js - 3</title>
+  </head>
+  <body>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+      }
+      canvas {
+        vertical-align: top;
+      }
+    </style>
+    <script>
+      let size = 50;
+      let firstClick;
+      let secondClick;
+      let typeOfClick = 1;
+      let currentColor = "blue";
+      let points = [];
+
+      function lineOnGrid(x, y, x2, y2) {
+        line(size * x, size * y, size * x2, size * y2);
+      }
+
+      function setupGrid() {
+        for (let i = 0; i < Math.round(windowWidth / size) + 1; i++) {
+          line(0, i * size, windowWidth, i * size);
+          line(i * size, 0, i * size, windowHeight);
+        }
+      }
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        setupGrid();
+      }
+
+      function draw() {
+        background(255);
+        setupGrid();
+
+        if (typeOfClick == 2) {
+          circle(firstClick.x * size, firstClick.y * size, size / 5);
+          stroke("green");
+          line(
+            firstClick.x * size,
+            firstClick.y * size,
+            Math.round(mouseX / size) * size,
+            Math.round(mouseY / size) * size
+          );
+          stroke("black");
+        }
+
+        points.forEach((point) => {
+          stroke(point.color);
+          lineOnGrid(point.x, point.y, point.x2, point.y2);
+        });
+        stroke("black");
+      }
+      function mousePressed() {
+        if (typeOfClick == 1) {
+          firstClick = {
+            x: Math.round(mouseX / size),
+            y: Math.round(mouseY / size),
+          };
+          typeOfClick = 2;
+        } else {
+          secondClick = {
+            x: Math.round(mouseX / size),
+            y: Math.round(mouseY / size),
+          };
+          typeOfClick = 1;
+          points.push({
+            x: firstClick.x,
+            y: firstClick.y,
+            x2: secondClick.x,
+            y2: secondClick.y,
+            color: currentColor,
+          });
+        }
+      }
+
+      function customSave(grid) {
+        noLoop();
+        background(255);
+        if (grid) {
+          stroke("lightgray");
+          setupGrid();
+        }
+        stroke("black");
+        points.forEach((point) => {
+          lineOnGrid(point[0], point[1], point[2], point[3]);
+        });
+        save();
+        loop();
+      }
+
+      function windowResized() {
+        resizeCanvas(windowWidth, windowHeight);
+        setup();
+      }
+
+      function keyPressed(e) {
+        console.log(keyCode);
+        if (keyCode == 67) {
+          currentColor = prompt("Quel couleur voullez vous ?");
+        }
+      }
+    </script>
+    <script src="./p5.min.js"></script>
+  </body>
+</html>
